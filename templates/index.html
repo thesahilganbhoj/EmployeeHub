@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Employee Resource Management{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="text-center mb-4">Employee Directory</h1>
+        
+        <div class="search-container card shadow-sm p-4 mb-4">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" id="searchInput" class="form-control" placeholder="Search by name, email, or skills...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch d-flex align-items-center h-100">
+                        <input class="form-check-input me-2" type="checkbox" id="availableToggle" style="transform: scale(1.5);">
+                        <label class="form-check-label" for="availableToggle">
+                            <strong>Show Available Only</strong>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="employeeGrid" class="row g-4">
+    <div class="col-12 text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<div id="noResults" class="alert alert-info text-center" style="display: none;">
+    <i class="fas fa-info-circle"></i> No employees found matching your criteria.
+</div>
+
+<script>
+let employees = [];
+
+async function loadEmployees() {
+    const search = document.getElementById('searchInput').value;
+    const availableOnly = document.getElementById('availableToggle').checked;
+    
+    const params = new URLSearchParams();
+    if (search) params.append('search', search);
+    if (availableOnly) params.append('available', 'true');
+    
+    try {
+        const response = await fetch(`/api/employees?${params}`);
+        employees = await response.json();
+        displayEmployees();
+    } catch (error) {
+        console.error('Error loading employees:', error);
+    }
+}
+
+function displayEmployees() {
+    const grid = document.getElementById('employeeGrid');
+    const noResults = document.getElementById('noResults');
+    
+    if (employees.length === 0) {
+        grid.innerHTML = '';
+        noResults.style.display = 'block';
+        return;
+    }
+    
+    noResults.style.display = 'none';
+    
+    grid.innerHTML = employees.map(emp => `
+        <div class="col-md-6 col-lg-4">
+            <div class="employee-card card h-100 shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-start mb-3">
+                        <div class="employee-avatar ${emp.is_available ? 'available' : 'unavailable'}">
+                            ${emp.initials}
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h5 class="card-title mb-1">${emp.name}</h5>
+                            <p class="text-muted small mb-0">${emp.role}</p>
+                        </div>
+                        <div class="availability-badge">
+                            ${emp.is_available ? 
+                                '<span class="badge bg-success">Available</span>' : 
+                                '<span class="badge bg-secondary">Deployed</span>'}
+                        </div>
+                    </div>
+                    <div class="employee-details">
+                        <p class="mb-2">
+                            <i class="fas fa-envelope text-muted"></i> 
+                            <small>${emp.email}</small>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-map-marker-alt text-muted"></i> 
+                            <small>${emp.location}</small>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fas fa-id-badge text-muted"></i> 
+                            <small>${emp.employee_id}</small>
+                        </p>
+                        <div class="skills-container">
+                            <i class="fas fa-code text-muted"></i> 
+                            <small class="text-muted">Skills:</small>
+                            <div class="mt-1">
+                                ${emp.skills.split(',').map(skill => 
+                                    `<span class="badge bg-light text-dark me-1 mb-1">${skill.trim()}</span>`
+                                ).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+document.getElementById('searchInput').addEventListener('input', debounce(loadEmployees, 300));
+document.getElementById('availableToggle').addEventListener('change', loadEmployees);
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+loadEmployees();
+</script>
+{% endblock %}

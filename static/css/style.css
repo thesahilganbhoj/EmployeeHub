@@ -1,0 +1,121 @@
+:root {
+    --primary-color: #4a5568;
+    --success-color: #48bb78;
+    --secondary-color: #718096;
+    --light-bg: #f7fafc;
+    --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-bg);
+    min-height: 100vh;
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.search-container {
+    background: white;
+    border-radius: 12px;
+}
+
+.employee-card {
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.employee-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.employee-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.25rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.employee-avatar.available {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 0 0 3px var(--success-color);
+}
+
+.employee-avatar.unavailable {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0.7;
+}
+
+.employee-details {
+    font-size: 0.9rem;
+}
+
+.employee-details i {
+    width: 20px;
+    text-align: center;
+}
+
+.skills-container {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.availability-badge {
+    flex-shrink: 0;
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+@media (max-width: 768px) {
+    .employee-avatar {
+        width: 50px;
+        height: 50px;
+        font-size: 1rem;
+    }
+    
+    .card-title {
+        font-size: 1rem;
+    }
+}
+
+.form-check-input:checked {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    margin: 2rem auto;
+}
